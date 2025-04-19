@@ -1,39 +1,38 @@
 package com.perkash.employee.employee_shift_manager.ui;
 
 import javax.swing.*;
-
-import com.perkash.employee_shift_manager.*;
-
 import java.awt.*;
+import com.perkash.employee_shift_manager.*;
 
 public class EmployeeShiftManagerUI {
     public static void main(String[] args) {
-        // Create Shift Manager Object
-        ShiftAssignmentManager manager = new ShiftAssignmentManager();
+        // ✅ Create Employee Repository
+        EmployeeRepository repository = new EmployeeRepository();
 
-        // Create Main Frame
+        // ✅ Setup Main Frame
         JFrame frame = new JFrame("Employee Shift Manager");
-        frame.setSize(500, 300);
+        frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        // Create Tabs to add multiple panels
+        // ✅ Create Tabs
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Employee Form Panel (Add Employee)
-        EmployeeFormPanel employeeFormPanel = new EmployeeFormPanel(manager);
+        // Add Employee Form Panel
+        EmployeeFormPanel employeeFormPanel = new EmployeeFormPanel(repository);
         tabbedPane.addTab("Add Employee", employeeFormPanel);
 
-        // Shift Form Panel (Assign Shift)
-        ShiftFormPanel shiftFormPanel = new ShiftFormPanel(manager);
+        // Assign Shift Form Panel
+        ShiftFormPanel shiftFormPanel = new ShiftFormPanel(repository);
         tabbedPane.addTab("Assign Shift", shiftFormPanel);
 
-        // Shift Summary Panel (View All)
-        ShiftSummaryPanel shiftSummaryPanel = new ShiftSummaryPanel(manager);
-        tabbedPane.addTab("View All Shifts", shiftSummaryPanel);
+        // View/Delete Employees Panel
+        ShiftSummaryPanel shiftSummaryPanel = new ShiftSummaryPanel(repository);
+        tabbedPane.addTab("View/Delete Employees", shiftSummaryPanel);
 
-        // Add TabbedPane to Frame
+        // Add Tabs to Frame
         frame.add(tabbedPane, BorderLayout.CENTER);
+
         frame.setVisible(true);
     }
 }

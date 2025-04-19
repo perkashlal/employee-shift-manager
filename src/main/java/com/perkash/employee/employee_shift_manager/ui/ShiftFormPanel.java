@@ -1,7 +1,6 @@
 package com.perkash.employee.employee_shift_manager.ui;
 
 import javax.swing.*;
-
 import com.perkash.employee_shift_manager.*;
 
 import java.awt.*;
@@ -10,27 +9,29 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ShiftFormPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+
     private JTextField employeeIdField;
     private JTextField startField;
     private JTextField endField;
     private JButton assignShiftButton;
-    private ShiftAssignmentManager manager;
+    private EmployeeRepository repository;
 
-    public ShiftFormPanel(ShiftAssignmentManager manager) {
-        this.manager = manager;
+    public ShiftFormPanel(EmployeeRepository repository) {
+        this.repository = repository;
         setLayout(new GridLayout(4, 2));
 
-        // Employee ID field
+        // Employee ID Field
         add(new JLabel("Employee ID:"));
         employeeIdField = new JTextField();
         add(employeeIdField);
 
-        // Shift Start field
+        // Shift Start Field
         add(new JLabel("Shift Start (yyyy-MM-dd HH:mm):"));
         startField = new JTextField();
         add(startField);
 
-        // Shift End field
+        // Shift End Field
         add(new JLabel("Shift End (yyyy-MM-dd HH:mm):"));
         endField = new JTextField();
         add(endField);
@@ -39,10 +40,10 @@ public class ShiftFormPanel extends JPanel {
         assignShiftButton = new JButton("Assign Shift");
         add(assignShiftButton);
 
-        // Empty label to fill grid
+        // Empty Label to Fill Layout
         add(new JLabel(""));
 
-        // ✅ Button Action
+        // Button Action
         assignShiftButton.addActionListener(e -> assignShift());
     }
 
@@ -58,7 +59,7 @@ public class ShiftFormPanel extends JPanel {
             LocalDateTime endDateTime = LocalDateTime.parse(endStr, formatter);
 
             // Find employee
-            List<Employee> employees = manager.getAllEmployees();
+            List<Employee> employees = repository.findAll();
             Employee found = null;
             for (Employee emp : employees) {
                 if (emp.getEmployeeId().equals(employeeId)) {
@@ -72,9 +73,11 @@ public class ShiftFormPanel extends JPanel {
                 return;
             }
 
-            // Create shift
-            Shift shift = new Shift(startDateTime, endDateTime);
-            found.addShift(shift);
+            // Assign new shift
+            found.addShift(new Shift(startDateTime, endDateTime));
+
+            // Optionally: save updated employee back to MongoDB (if your system allows update)
+            // repository.updateEmployeeById(employeeId, found);
 
             JOptionPane.showMessageDialog(this, "Shift assigned successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
 

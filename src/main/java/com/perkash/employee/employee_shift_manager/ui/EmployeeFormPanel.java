@@ -1,38 +1,33 @@
 package com.perkash.employee.employee_shift_manager.ui;
 
 import javax.swing.*;
-
-import com.perkash.employee_shift_manager.*;
-
 import java.awt.*;
+import com.perkash.employee_shift_manager.Employee;
+import com.perkash.employee_shift_manager.EmployeeRepository;
 
 public class EmployeeFormPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private JTextField nameField, idField, roleField;
     private JButton addButton;
-    private ShiftAssignmentManager manager;
+    private EmployeeRepository repository;
 
-    public EmployeeFormPanel(ShiftAssignmentManager manager) {
-        this.manager = manager;
+    public EmployeeFormPanel(EmployeeRepository repository) {
+        this.repository = repository;
         setLayout(new GridLayout(4, 2));
 
-        // Name Field
         add(new JLabel("Name:"));
         nameField = new JTextField();
         add(nameField);
 
-        // Employee ID Field
         add(new JLabel("Employee ID:"));
         idField = new JTextField();
         add(idField);
 
-        // Role Field
         add(new JLabel("Role:"));
         roleField = new JTextField();
         add(roleField);
 
-        // Add Button
         addButton = new JButton("Add Employee");
         addButton.addActionListener(e -> addEmployee());
         add(addButton);
@@ -49,11 +44,10 @@ public class EmployeeFormPanel extends JPanel {
         }
 
         Employee employee = new Employee(name, id, role);
-        manager.addEmployee(employee);
+        repository.save(employee);
 
         JOptionPane.showMessageDialog(this, "Employee added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
-        // Clear fields
         nameField.setText("");
         idField.setText("");
         roleField.setText("");
