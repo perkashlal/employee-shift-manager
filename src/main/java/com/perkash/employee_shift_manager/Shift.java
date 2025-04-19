@@ -7,7 +7,10 @@ public class Shift {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
-    // Constructor
+    // Default constructor (important for MongoDB serialization)
+    public Shift() {}
+
+    // Constructor with fields
     public Shift(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -20,6 +23,15 @@ public class Shift {
 
     public LocalDateTime getEndDateTime() {
         return endDateTime;
+    }
+
+    // Setters
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     // Overriding toString method to display shifts nicely

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.perkash.employee.employee_shift_manager.EmployeeTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.039 s -- in com.perkash.employee.employee_shift_manager.EmployeeTest
