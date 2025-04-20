@@ -2,37 +2,32 @@ package com.perkash.employee.employee_shift_manager.ui;
 
 import javax.swing.*;
 import java.awt.*;
-import com.perkash.employee_shift_manager.*;
+import com.perkash.employee_shift_manager.EmployeeRepository;
 
 public class EmployeeShiftManagerUI {
     public static void main(String[] args) {
-        // ✅ Create Employee Repository
+        // Create the shared Employee Repository
         EmployeeRepository repository = new EmployeeRepository();
 
-        // ✅ Setup Main Frame
+        // Setup the Main Frame
         JFrame frame = new JFrame("Employee Shift Manager");
-        frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(700, 500);
+        frame.setLocationRelativeTo(null); // Center the window on screen
         frame.setLayout(new BorderLayout());
 
-        // ✅ Create Tabs
+        // Create Tabbed Pane
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Add Employee Form Panel
-        EmployeeFormPanel employeeFormPanel = new EmployeeFormPanel(repository);
-        tabbedPane.addTab("Add Employee", employeeFormPanel);
+        // Create panels and add them to tabs
+        tabbedPane.addTab("➕ Add Employee", new EmployeeFormPanel(repository));
+        tabbedPane.addTab("🕑 Assign Shift", new ShiftFormPanel(repository));
+        tabbedPane.addTab("📋 View/Delete Employees", new ShiftSummaryPanel(repository));
 
-        // Assign Shift Form Panel
-        ShiftFormPanel shiftFormPanel = new ShiftFormPanel(repository);
-        tabbedPane.addTab("Assign Shift", shiftFormPanel);
-
-        // View/Delete Employees Panel
-        ShiftSummaryPanel shiftSummaryPanel = new ShiftSummaryPanel(repository);
-        tabbedPane.addTab("View/Delete Employees", shiftSummaryPanel);
-
-        // Add Tabs to Frame
+        // Add Tabbed Pane to Frame
         frame.add(tabbedPane, BorderLayout.CENTER);
 
+        // Make Frame Visible
         frame.setVisible(true);
     }
 }

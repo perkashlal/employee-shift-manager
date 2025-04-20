@@ -3,9 +3,6 @@ package com.perkash.employee_shift_manager;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import com.perkash.employee_shift_manager.Employee;
-import com.perkash.employee_shift_manager.Shift;
-
 import java.util.List;
 import java.time.LocalDateTime;
 

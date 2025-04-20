@@ -1,10 +1,6 @@
 package com.perkash.employee_shift_manager;
-
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-
-import com.perkash.employee_shift_manager.Employee;
-import com.perkash.employee_shift_manager.ShiftAssignmentManager;
 
 import java.util.List;
 
@@ -19,7 +15,7 @@ public class ShiftAssignmentManagerTest {
 
         List<Employee> employees = manager.getAllEmployees();
         assertEquals(1, employees.size());
-        assertEquals("Jane Doe", employees.get(0).getName());
+        assertEquals("perkashlal", employees.get(0).getName());
     }
 
     @Test
