@@ -1,4 +1,4 @@
-package com.perkash.employee.employee_shift_manager.ui;
+package com.perkash.employee_shift_manager.ui;
 
 import javax.swing.*;
 import java.awt.*;

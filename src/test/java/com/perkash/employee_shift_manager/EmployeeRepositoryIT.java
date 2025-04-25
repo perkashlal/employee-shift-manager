@@ -1,5 +1,4 @@
 package com.perkash.employee_shift_manager;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ public class EmployeeRepositoryIT {
         collection = database.getCollection("employees");
         collection.drop(); // Clean the database before each test
 
-        repository = new EmployeeRepository();
+        repository = new EmployeeRepository(mongoClient);
     }
 
     @AfterEach

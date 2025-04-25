@@ -1,4 +1,4 @@
-package com.perkash.employee.employee_shift_manager.ui;
+package com.perkash.employee_shift_manager.ui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,12 +7,12 @@ import com.perkash.employee_shift_manager.EmployeeRepository;
 public class EmployeeShiftManagerUI {
     public static void main(String[] args) {
         // Create the shared Employee Repository
-        EmployeeRepository repository = new EmployeeRepository();
+    	EmployeeRepository repository = EmployeeRepository.createWithDefaultMongo();
 
         // Setup the Main Frame
         JFrame frame = new JFrame("Employee Shift Manager");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 500);
+        frame.setSize(500, 300);
         frame.setLocationRelativeTo(null); // Center the window on screen
         frame.setLayout(new BorderLayout());
 

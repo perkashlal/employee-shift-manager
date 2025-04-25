@@ -7,20 +7,23 @@ import java.util.List;
 import org.bson.Document;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 public class EmployeeRepository {
 
-    private MongoClient mongoClient;
-    private MongoDatabase database;
-    private MongoCollection<Document> collection;
+    private final MongoCollection<Document> collection;
 
-    public EmployeeRepository() {
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
-        database = mongoClient.getDatabase("employee_db");
-        collection = database.getCollection("employees");
+    // 🔁 Constructor that accepts a MongoClient (used in tests)
+    public EmployeeRepository(MongoClient mongoClient) {
+        MongoDatabase database = mongoClient.getDatabase("employee_db");
+        this.collection = database.getCollection("employees");
+    }
+
+    // 🔁 Optional: for production use (if needed)
+    public static EmployeeRepository createWithDefaultMongo() {
+        MongoClient mongoClient = com.mongodb.client.MongoClients.create("mongodb://localhost:27017");
+        return new EmployeeRepository(mongoClient);
     }
 
     public void save(Employee employee) {
