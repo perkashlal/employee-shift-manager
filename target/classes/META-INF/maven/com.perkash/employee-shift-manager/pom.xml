@@ -53,8 +53,8 @@
         <!-- ✅ AssertJ Swing (UI testing) -->
         <dependency>
             <groupId>org.assertj</groupId>
-            <artifactId>assertj-swing-junit</artifactId>
-            <version>3.17.1</version>
+            <artifactId>assertj-swing</artifactId>
+            <version>3.17.1</version> <!-- Keep this version as per your request -->
             <scope>test</scope>
         </dependency>
 

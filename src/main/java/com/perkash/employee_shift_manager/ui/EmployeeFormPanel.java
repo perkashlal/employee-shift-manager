@@ -2,7 +2,7 @@ package com.perkash.employee_shift_manager.ui;
 
 import javax.swing.*;
 import java.awt.*;
-
+import javax.swing.table.DefaultTableModel;
 import com.perkash.employee_shift_manager.Employee;
 import com.perkash.employee_shift_manager.EmployeeRepository;
 
@@ -10,9 +10,11 @@ public class EmployeeFormPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private JTextField nameField, idField, roleField;
-    private JButton saveButton;
+    private JButton saveButton, deleteButton;
     private JLabel statusLabel;
     private final EmployeeRepository repository;
+    private JTable employeeTable;
+    private DefaultTableModel tableModel;
 
     // ✅ This flag allows tests to disable popups
     private boolean showPopups = true;
@@ -63,7 +65,7 @@ public class EmployeeFormPanel extends JPanel {
         roleField.setName("roleField");
         add(roleField, gbc);
 
-        // Button
+        // Button for adding employee
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
@@ -73,12 +75,27 @@ public class EmployeeFormPanel extends JPanel {
         saveButton.addActionListener(e -> saveEmployee());
         add(saveButton, gbc);
 
+        // Button for deleting employee
+        deleteButton = new JButton("Delete Employee");
+        deleteButton.setName("deleteButton");
+        deleteButton.addActionListener(e -> deleteEmployee());
+        add(deleteButton, gbc);
+
         // Status label
         gbc.gridy = 4;
         statusLabel = new JLabel(" ");
         statusLabel.setName("statusLabel");
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(statusLabel, gbc);
+
+        // Employee Table to display added employees
+        String[] columns = {"Name", "Employee ID", "Role"};
+        tableModel = new DefaultTableModel(columns, 0);
+        employeeTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(employeeTable);
+        gbc.gridy = 5;
+        gbc.gridheight = 2;
+        add(scrollPane, gbc);
     }
 
     private void saveEmployee() {
@@ -97,14 +114,50 @@ public class EmployeeFormPanel extends JPanel {
         Employee employee = new Employee(name, id, role);
         repository.save(employee);
 
+        // Add the employee to the table
+        tableModel.addRow(new Object[]{name, id, role});
+
         if (showPopups) {
             JOptionPane.showMessageDialog(this, "Employee added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         }
         statusLabel.setText("Employee added successfully!");
 
+        // Clear the input fields
         nameField.setText("");
         idField.setText("");
         roleField.setText("");
         nameField.requestFocusInWindow();
+    }
+
+    private void deleteEmployee() {
+        // Get selected row from the table
+        int selectedRow = employeeTable.getSelectedRow();
+        if (selectedRow != -1) {
+            // Retrieve the Employee ID from the selected row (assume it’s in column 1)
+            String employeeId = (String) tableModel.getValueAt(selectedRow, 1);
+
+            // Delete the employee from the repository using the ID
+            boolean isDeleted = repository.deleteEmployeeById(employeeId);
+
+            if (isDeleted) {
+                // Remove the row from the table if deletion is successful
+                tableModel.removeRow(selectedRow);
+                if (showPopups) {
+                    JOptionPane.showMessageDialog(this, "Employee deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+                statusLabel.setText("Employee deleted successfully!");
+            } else {
+                if (showPopups) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete employee!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                statusLabel.setText("Failed to delete employee!");
+            }
+        } else {
+            // No employee selected
+            if (showPopups) {
+                JOptionPane.showMessageDialog(this, "Please select an employee to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            statusLabel.setText("No employee selected!");
+        }
     }
 }
