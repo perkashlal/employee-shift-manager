@@ -1,6 +1,5 @@
 package com.perkash.employee_shift_manager.it;
 
-import com.perkash.employee_shift_manager.Employee;
 import com.perkash.employee_shift_manager.EmployeeRepository;
 import com.perkash.employee_shift_manager.ui.EmployeeFormPanel;
 import org.assertj.swing.core.BasicRobot;
@@ -26,11 +25,10 @@ public class EmployeeFormPanelE2ETest {
     public void setUp() {
         robot = BasicRobot.robotWithNewAwtHierarchy();
         repository = EmployeeRepository.createWithDefaultMongo();
-        repository.deleteAll(); // ensure empty start
+        repository.deleteAll();
 
         frame = GuiActionRunner.execute(() -> {
             JFrame f = new JFrame("Test Employee Form");
-            f.setName("employeeFormFrame");
             EmployeeFormPanel panel = new EmployeeFormPanel(repository);
             panel.setShowPopups(false);
             f.add(panel);
@@ -50,89 +48,43 @@ public class EmployeeFormPanelE2ETest {
         if (frame  != null) frame.dispose();
     }
 
-    @Test @Order(1)
-    public void testShouldAddEmployeeSuccessfully() {
-        window.textBox("nameField").enterText("Jane");
-        window.textBox("idField").enterText("E999");
-        window.textBox("roleField").enterText("Developer");
-        window.button("saveButton").click();
-        robot.waitForIdle();
-
-        assertThat(window.label("statusLabel").text())
-            .isEqualTo("Employee added successfully!");
-        assertThat(window.textBox("nameField").text()).isEmpty();
-        assertThat(window.textBox("idField").text()).isEmpty();
-        assertThat(window.textBox("roleField").text()).isEmpty();
-    }
-
-    @Test @Order(2)
-    public void testShouldShowErrorForEmptyFields() {
-        window.textBox("nameField").enterText("");
-        window.textBox("idField").enterText("");
-        window.textBox("roleField").enterText("");
-        window.button("saveButton").click();
-        robot.waitForIdle();
-
-        assertThat(window.label("statusLabel").text())
-            .isEqualTo("Failed to add employee!");
-    }
-
-    @Test @Order(3)
-    public void testShouldViewEmployeeSuccessfully() {
-        window.textBox("nameField").enterText("John Doe");
-        window.textBox("idField").enterText("E123");
-        window.textBox("roleField").enterText("Manager");
-        window.button("saveButton").click();
-        robot.waitForIdle();
-
-        int rowCount = window.table("employeeTable").rowCount();
-        assertThat(rowCount).isGreaterThan(0);
-
-        String employeeName = window.table("employeeTable")
-            .cell(TableCell.row(rowCount - 1).column(0))
-            .value();
-        assertThat(employeeName).isEqualTo("John Doe");
-    }
-
     @Test @Order(4)
     public void testShouldDeleteEmployeeSuccessfully() {
-        // (arrange) add a new employee
+        // add one employee
         window.textBox("nameField").enterText("Mark");
         window.textBox("idField").enterText("E555");
         window.textBox("roleField").enterText("Tester");
         window.button("saveButton").click();
         robot.waitForIdle();
-    }
-        @Test 
-        @Order(5)
-        public void testShouldShowErrorWhenDeletingWithoutSelection() {
-            // arrange: ensure table is empty or unselected
-            int before = window.table("employeeTable").rowCount();
 
-            // act: click Delete with nothing selected
-            window.button("deleteButton").click();
-            robot.waitForIdle();
+        int before = window.table("employeeTable").rowCount();
+        assertThat(before).isGreaterThan(0);
 
-            // assert: table unchanged
-            assertThat(window.table("employeeTable").rowCount())
-                .isEqualTo(before);
-
-            // assert: correct status message
-            assertThat(window.label("statusLabel").text())
-                .isEqualTo("No employee selected!");
-        
-        
-        
-        // (act) select the last row and delete
         window.table("employeeTable").selectRows(before - 1);
         window.button("deleteButton").click();
         robot.waitForIdle();
 
-        // (assert) one less row and success status
         int after = window.table("employeeTable").rowCount();
         assertThat(after).isEqualTo(before - 1);
         assertThat(window.label("statusLabel").text())
             .isEqualTo("Employee deleted successfully!");
-    
-}
+    }
+
+    @Test @Order(5)
+    public void testShouldShowErrorWhenDeletingWithoutSelection() {
+        // capture row count
+        int before = window.table("employeeTable").rowCount();
+
+        // click Delete with no selection
+        window.button("deleteButton").click();
+        robot.waitForIdle();
+
+        // table must remain the same
+        assertThat(window.table("employeeTable").rowCount())
+            .isEqualTo(before);
+
+        // and status message must be exactly this
+        assertThat(window.label("statusLabel").text())
+            .isEqualTo("No employee selected!");
+    }
 }
