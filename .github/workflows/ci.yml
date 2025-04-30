@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Run tests with JaCoCo
-        run: mvn verify jacoco:report
+        run: mvn verify
 
       - name: Upload JaCoCo report
         if: success()
