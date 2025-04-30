@@ -1,10 +1,6 @@
 name: Java CI with Maven + MongoDB + Coveralls
 on:
-  workflow_dispatch:  # <-- Adds "Run workflow" button on GitHub
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+
 
 on:
   push:
