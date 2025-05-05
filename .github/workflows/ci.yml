@@ -1,0 +1,46 @@
+name: Java CI with Maven + MongoDB + Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run all tests (unit + integration) & collect coverage
+        run: mvn clean verify
+
+      - name: Upload JaCoCo report to Codecov
+        if: success()
+        uses: codecov/codecov-action@v3
+        with:
+          files: target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
+
+      - name: Publish coverage to Coveralls
+        if: success()
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
