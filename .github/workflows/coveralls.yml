@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -22,8 +20,13 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Build, run all tests & collect coverage
+      - name: Build & run all tests (with JaCoCo)
         run: mvn clean verify
 
-      - name: Publish coverage report to Coveralls
-        run: mvn coveralls:report
+      - name: Publish coverage to Coveralls
+        uses: coverallsapp/github-action@v2.3.6
+        with:
+          # A built-in token GITHUB_TOKEN is enough for verifying your repo on Coveralls
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Point this at the xml report JaCoCo generates by default
+          path-to-lcov: target/site/jacoco/jacoco.xml
