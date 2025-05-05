@@ -10,16 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mongo:
-        image: mongo:6.0.6
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -34,28 +24,23 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/org/apache/maven/plugins
+          path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run tests & collect coverage (Jacoco)
-        run: mvn --batch-mode verify
+      - name: Run all tests (unit + integration) & collect coverage
+        run: mvn clean verify
 
-      # Codecov
-      - name: Upload to Codecov
+      - name: Upload JaCoCo report to Codecov
         if: success()
         uses: codecov/codecov-action@v3
         with:
           files: target/site/jacoco/jacoco.xml
           fail_ci_if_error: true
 
-      # Coveralls
-      - name: Publish to Coveralls
+      - name: Publish coverage to Coveralls
         if: success()
-        uses: coverallsapp/github-action@v2.3.6
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: target/site/jacoco/jacoco.xml
