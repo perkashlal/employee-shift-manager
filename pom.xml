@@ -1,29 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-      http://maven.apache.org/POM/4.0.0
-      https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.perkash</groupId>
   <artifactId>employee-shift-manager</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <!-- Java -->
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <!-- Testing -->
+    <java.version>17</java.version>
     <junit.version>5.10.0</junit.version>
     <assertj.version>3.25.1</assertj.version>
     <testcontainers.version>1.19.1</testcontainers.version>
-
-    <!-- SLF4J binder for integration tests -->
     <slf4j.simple.version>2.0.9</slf4j.simple.version>
+    <jacoco.version>0.8.10</jacoco.version>
   </properties>
 
   <dependencies>
@@ -34,7 +25,7 @@
       <version>4.11.1</version>
     </dependency>
 
-    <!-- JUnit 5 (API + Engine) -->
+    <!-- JUnit 5 -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -42,15 +33,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- JUnit 4 (for AssertJ Swing) -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- AssertJ Core -->
+    <!-- AssertJ for assertions -->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -58,7 +41,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- AssertJ Swing (E2E GUI tests) -->
+    <!-- AssertJ Swing for E2E -->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-swing</artifactId>
@@ -66,7 +49,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Testcontainers for MongoDB integration -->
+    <!-- Testcontainers MongoDB -->
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>mongodb</artifactId>
@@ -80,7 +63,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Simple SLF4J binder (silences Testcontainers / driver warnings) -->
+    <!-- SLF4J simple binding -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -91,17 +74,15 @@
 
   <build>
     <plugins>
-      <!-- JaCoCo: prepare agent and generate report -->
+      <!-- JaCoCo -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.10</version>
+        <version>${jacoco.version}</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
+            <goals><goal>prepare-agent</goal></goals>
             <configuration>
               <propertyName>jacocoArgLine</propertyName>
             </configuration>
@@ -109,76 +90,62 @@
           <execution>
             <id>report</id>
             <phase>verify</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
+            <goals><goal>report</goal></goals>
           </execution>
         </executions>
       </plugin>
 
-      <!-- Surefire: runs unit tests -->
+      <!-- Surefire for unit tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.1.2</version>
         <configuration>
+          <argLine>${jacocoArgLine}</argLine>
           <includes>
             <include>**/*Test.java</include>
           </includes>
-          <argLine>${jacocoArgLine}</argLine>
           <useModulePath>false</useModulePath>
         </configuration>
       </plugin>
 
-      <!-- Failsafe: runs integration (IT) & E2E tests -->
+      <!-- Failsafe for IT & E2E -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.1.2</version>
         <executions>
           <execution>
-            <id>integration-and-e2e</id>
+            <id>integration-tests</id>
             <goals>
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
             <configuration>
+              <argLine>${jacocoArgLine}</argLine>
               <includes>
                 <include>**/*IT.java</include>
                 <include>**/*E2ETest.java</include>
               </includes>
-              <argLine>${jacocoArgLine}</argLine>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      <plugin>
-      
-  <groupId>org.eluder.coveralls</groupId>
-  <artifactId>coveralls-maven-plugin</artifactId>
-  <version>4.3.0</version>
-  …
-</plugin>
 
-
-      <!-- Coveralls: uploads combined coverage after verify -->
+      <!-- Coveralls plugin v3.1.0 -->
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
-        <version>4.3.0</version>
-        <configuration>
-          <!-- when running on GitHub Actions the default COVERALLS_REPO_TOKEN env var will be used -->
-          <jacocoReportPath>${project.build.directory}/jacoco.exec</jacocoReportPath>
-        </configuration>
+        <version>3.1.0</version>
         <executions>
           <execution>
-            <id>send-to-coveralls</id>
             <phase>verify</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
+            <goals><goal>report</goal></goals>
           </execution>
         </executions>
+        <configuration>
+          <jacocoReportPath>${project.build.directory}/jacoco.exec</jacocoReportPath>
+        </configuration>
       </plugin>
     </plugins>
   </build>
